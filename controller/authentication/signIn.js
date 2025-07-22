@@ -16,8 +16,8 @@ const signInUser = async (req, res) => {
 
     try {
         const user = await pool.query(
-            'SELECT id, password FROM users WHERE email = $1',
-            [email]
+            'SELECT id, password FROM users WHERE email = $1 AND status = $2',
+            [email, 'active']
         );
 
         if (user.rows.length === 0) {
