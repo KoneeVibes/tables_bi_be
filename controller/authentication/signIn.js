@@ -1,9 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const getPGDBPool = require('../../db/pgDBPoolManager');
 require('dotenv').config();
-
-const appDBConnect = require('../../db/appDBConnect');
-const pool = appDBConnect();
 
 const signInUser = async (req, res) => {
     const { email, password } = req.body || {};
@@ -14,8 +12,18 @@ const signInUser = async (req, res) => {
         });
     };
 
+    // connect to database
+    const dbConfig = {
+        user: process.env.DB_USER,
+        host: process.env.DB_HOST,
+        database: process.env.DB_NAME,
+        password: process.env.DB_PASSWORD,
+        port: process.env.DB_PORT,
+    };
+    const pgPool = getPGDBPool(dbConfig);
+
     try {
-        const user = await pool.query(
+        const user = await pgPool.query(
             'SELECT id, password FROM users WHERE email = $1 AND status = $2',
             [email, 'active']
         );

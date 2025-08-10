@@ -1,7 +1,6 @@
 const bcrypt = require("bcrypt");
-
-const appDBConnect = require('../../db/appDBConnect');
-const pool = appDBConnect();
+const getPGDBPool = require('../../db/pgDBPoolManager');
+require('dotenv').config();
 
 const verifyOtp = async (req, res) => {
     const { email, otp } = req.body || {};
@@ -11,8 +10,19 @@ const verifyOtp = async (req, res) => {
             message: "Email or OTP not found, Cannot Proceed"
         });
     };
+
+    // connect to database
+    const dbConfig = {
+        user: process.env.DB_USER,
+        host: process.env.DB_HOST,
+        database: process.env.DB_NAME,
+        password: process.env.DB_PASSWORD,
+        port: process.env.DB_PORT,
+    };
+    const pgPool = getPGDBPool(dbConfig);
+
     try {
-        const existingOTP = await pool.query(
+        const existingOTP = await pgPool.query(
             'SELECT otp FROM valid_account_verification_otps WHERE requester = $1',
             [email]
         );
@@ -33,11 +43,11 @@ const verifyOtp = async (req, res) => {
         }
 
         // If OTP is valid, update user status to active and delete the OTP record
-        await pool.query(
-            'UPDATE users SET status = $1 WHERE email = $2',
+        const updatedUser = await pgPool.query(
+            'UPDATE users SET status = $1 WHERE email = $2 RETURNING id',
             ['active', email]
         );
-        await pool.query(
+        await pgPool.query(
             'DELETE FROM account_verification_otps WHERE requester = $1',
             [email]
         );
@@ -45,6 +55,7 @@ const verifyOtp = async (req, res) => {
         return res.status(200).json({
             status: "success",
             message: "OTP is successfully verified",
+            data: { id: updatedUser.rows[0].id }
         });
     } catch (error) {
         console.error(error);
