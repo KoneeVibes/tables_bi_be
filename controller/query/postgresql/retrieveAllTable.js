@@ -22,11 +22,11 @@ const retrieveAllTable = async (req, res) => {
 
 		const pool = userPGDBPool(dbConfig);
 		const result = await pool.query(`
-            SELECT table_name
+            SELECT table_schema, table_name
             FROM information_schema.tables
-            WHERE table_schema = 'public'
-              AND table_type = 'BASE TABLE';
+            WHERE table_type = 'BASE TABLE';
           `);
+		console.log("Tables:", result.rows);          
 
 		return res.status(200).json({ status: "success", data: result.rows });
 	} catch (err) {
