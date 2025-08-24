@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const getPGDBPool = require("../db/pgDBPoolManager");
+const appPGDBPool = require("../db/pgDBPoolManager");
 const { tokenBlacklist } = require("../controller/authentication/signOut");
 require("dotenv").config();
 
@@ -12,7 +12,7 @@ module.exports = async (req, res, next) => {
 		password: process.env.DB_PASSWORD,
 		port: process.env.DB_PORT,
 	};
-	const pgPool = getPGDBPool(dbConfig);
+	const pgPool = appPGDBPool(dbConfig);
 
 	try {
 		const authHeader = req.headers.authorization;

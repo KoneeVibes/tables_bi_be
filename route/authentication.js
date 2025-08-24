@@ -1,6 +1,7 @@
 const express = require("express");
-const router = express.Router();
 const { signOutUser } = require("../controller/authentication/signOut");
+
+const router = express.Router();
 
 router.post("/sign-up", require("../controller/authentication/signUp"));
 router.post("/sign-in", require("../controller/authentication/signIn"));
