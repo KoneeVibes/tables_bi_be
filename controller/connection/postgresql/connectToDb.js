@@ -1,6 +1,8 @@
 const userPGDBPool = require("../../../db/pgDBPoolManager");
 const { setActiveConnection } = require("./activeConnection");
 
+const delimiter = process.env.POOL_KEY_DELIMITER;
+
 const connectToDb = async (req, res) => {
 	const { host, port, username, password, dbName } = req.body || {};
 	if (!host || !port || !username || !password || !dbName) {
@@ -24,7 +26,7 @@ const connectToDb = async (req, res) => {
 		await userPgPool.query("SELECT 1");
 
 		const userId = req.headers.authorization.split(" ")[1];
-		const poolKey = `${host}|${dbName}|${username}`;
+		const poolKey = `${host}${delimiter}${dbName}${delimiter}${username}`;
 		setActiveConnection(userId, poolKey);
 
 		return res.status(200).json({

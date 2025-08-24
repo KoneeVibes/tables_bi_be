@@ -1,9 +1,10 @@
 const { Pool } = require("pg");
 
 const pools = new Map();
+const delimiter = process.env.POOL_KEY_DELIMITER;
 
 function getDBPool({ user, host, database, password, port }) {
-	const key = `${host}_${database}_${user}`;
+	const key = `${host}${delimiter}${database}${delimiter}${user}`;
 
 	if (pools.has(key)) {
 		return pools.get(key);

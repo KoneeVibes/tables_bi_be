@@ -3,6 +3,8 @@ const {
 	getActiveConnection,
 } = require("../../connection/postgresql/activeConnection");
 
+const delimiter = process.env.POOL_KEY_DELIMITER;
+
 const retrieveAllTable = async (req, res) => {
 	try {
 		const { authorization } = req.headers;
@@ -11,11 +13,9 @@ const retrieveAllTable = async (req, res) => {
 			return res
 				.status(400)
 				.json({ status: "fail", message: "No active DB connection" });
-        }
-        
-        console.log(poolKey);
+		}
 
-		const [host, dbName, username] = poolKey.split("|");
+		const [host, dbName, username] = poolKey.split(delimiter);
 		const dbConfig = {
 			user: username,
 			host: host,
