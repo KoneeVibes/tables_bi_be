@@ -30,6 +30,7 @@ const retrieveAllTable = async (req, res) => {
 
 		return res.status(200).json({ status: "success", data: result.rows });
 	} catch (err) {
+		console.error("Error retrieving tables:", err);
 		return res.status(500).json({
 			status: "error",
 			message:
