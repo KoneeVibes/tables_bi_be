@@ -16,6 +16,7 @@ function getDBPool({ user, host, database, password, port }) {
 		password,
 		port,
 		ssl: {
+			require: true,
 			rejectUnauthorized: false,
 		},
 	});
