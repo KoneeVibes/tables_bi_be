@@ -11,7 +11,9 @@ const retrieveAllTable = async (req, res) => {
 			return res
 				.status(400)
 				.json({ status: "fail", message: "No active DB connection" });
-		}
+        }
+        
+        console.log(poolKey);
 
 		const [host, dbName, username] = poolKey.split("_");
 		const dbConfig = {
@@ -29,8 +31,8 @@ const retrieveAllTable = async (req, res) => {
           `);
 
 		return res.status(200).json({ status: "success", data: result.rows });
-	} catch (err) {
-		console.error("Error retrieving tables:", err);
+	} catch (error) {
+		console.error(error);
 		return res.status(500).json({
 			status: "error",
 			message:
