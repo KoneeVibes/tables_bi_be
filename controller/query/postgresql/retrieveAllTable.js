@@ -15,7 +15,7 @@ const retrieveAllTable = async (req, res) => {
         
         console.log(poolKey);
 
-		const [host, dbName, username] = poolKey.split("_");
+		const [host, dbName, username] = poolKey.split("|");
 		const dbConfig = {
 			user: username,
 			host: host,
