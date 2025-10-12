@@ -28,6 +28,7 @@ const connectToDb = async (req, res) => {
 		const userId = req.headers.authorization.split(" ")[1];
 		const poolKey = `${host}${delimiter}${dbName}${delimiter}${username}${delimiter}${port}${delimiter}${password}`;
 		setActiveConnection(userId, poolKey);
+		console.log(userId, poolKey);
 
 		return res.status(200).json({
 			status: "success",
