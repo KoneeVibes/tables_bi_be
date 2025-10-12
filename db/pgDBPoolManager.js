@@ -1,10 +1,11 @@
 const { Pool } = require("pg");
+require("dotenv").config();
 
-const pools = new Map();
+const pools = new Map(); //ideally should be reddis
 const delimiter = process.env.POOL_KEY_DELIMITER;
 
 function getDBPool({ user, host, database, password, port }) {
-	const key = `${host}${delimiter}${database}${delimiter}${user}`;
+	const key = `${host}${delimiter}${database}${delimiter}${user}${delimiter}${port}`;
 
 	if (pools.has(key)) {
 		return pools.get(key);

@@ -24,7 +24,7 @@ const signInUser = async (req, res) => {
 
 	try {
 		const user = await pgPool.query(
-			"SELECT id, password FROM users WHERE email = $1 AND status = $2",
+			"SELECT id, password FROM app_user WHERE email = $1 AND status = $2",
 			[email, "active"]
 		);
 

@@ -24,7 +24,7 @@ const completeProfile = async (req, res) => {
 
 	try {
 		const result = await pgPool.query(
-			"UPDATE users SET job_title = $1, purpose = $2, acquisition_method = $3, updated_at = NOW() where id = $4",
+			"UPDATE app_user SET job_title = $1, purpose = $2, acquisition_method = $3, updated_at = NOW() where id = $4",
 			[jobTitle, purpose, acquisitionMethod, userId]
 		);
 

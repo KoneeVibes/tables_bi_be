@@ -14,9 +14,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // api routes would go under here:
 app.use("/api/v1/authentication", require("./route/authentication"));
 app.use(
-	"/api/v1/usermanagement",
+	"/api/v1/user-management",
 	require("./middleware/authorization"),
-	require("./route/usermanagement")
+	require("./route/userManagement")
 );
 app.use(
 	"/api/v1/connection",
@@ -27,6 +27,11 @@ app.use(
 	"/api/v1/query",
 	require("./middleware/authorization"),
 	require("./route/query")
+);
+app.use(
+	"/api/v1/saved-view",
+	require("./middleware/authorization"),
+	require("./route/savedView")
 );
 
 module.exports = app;

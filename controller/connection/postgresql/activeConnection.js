@@ -1,4 +1,4 @@
-const activeConnections = new Map();
+const activeConnections = new Map(); //should ideally be reddis
 
 function setActiveConnection(userId, poolKey) {
 	activeConnections.set(userId, poolKey);

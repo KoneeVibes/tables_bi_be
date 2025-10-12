@@ -23,7 +23,7 @@ const verifyOtp = async (req, res) => {
 
 	try {
 		const existingOTP = await pgPool.query(
-			"SELECT otp FROM valid_account_verification_otps WHERE requester = $1",
+			"SELECT otp FROM valid_account_verification_otp WHERE requester = $1",
 			[email]
 		);
 		if (existingOTP.rows.length === 0) {
@@ -44,11 +44,11 @@ const verifyOtp = async (req, res) => {
 
 		// If OTP is valid, update user status to active and delete the OTP record
 		const updatedUser = await pgPool.query(
-			"UPDATE users SET status = $1 WHERE email = $2 RETURNING id",
+			"UPDATE app_user SET status = $1 WHERE email = $2 RETURNING id",
 			["active", email]
 		);
 		await pgPool.query(
-			"DELETE FROM account_verification_otps WHERE requester = $1",
+			"DELETE FROM account_verification_otp WHERE requester = $1",
 			[email]
 		);
 

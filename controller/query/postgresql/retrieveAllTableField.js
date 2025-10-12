@@ -5,9 +5,11 @@ const {
 
 const delimiter = process.env.POOL_KEY_DELIMITER;
 
-const retrieveAllTable = async (req, res) => {
+const retrieveAllTableFields = async (req, res) => {
 	try {
+		const { tableName } = req.params;
 		const { authorization } = req.headers;
+
 		const poolKey = getActiveConnection(authorization.split(" ")[1]);
 		if (!poolKey) {
 			return res
@@ -24,22 +26,26 @@ const retrieveAllTable = async (req, res) => {
 		};
 
 		const pool = userPGDBPool(dbConfig);
-		const result = await pool.query(`
-            SELECT table_name
-            FROM information_schema.tables
+		const result = await pool.query(
+			`
+            SELECT 
+              column_name, 
+              data_type
+            FROM information_schema.columns
             WHERE table_schema = 'public'
-              AND table_type = 'BASE TABLE';
-          `);
-
+              AND table_name = $1;
+            `,
+			[tableName]
+		);
 		return res.status(200).json({ status: "success", data: result.rows });
 	} catch (error) {
 		console.error(error);
 		return res.status(500).json({
 			status: "error",
 			message:
-				"Server encountered an issue in retrieving all tables at this moment. Please retry",
+				"Server encountered an issue in retrieving all table fields at this moment. Please retry",
 		});
 	}
 };
 
-module.exports = retrieveAllTable;
+module.exports = retrieveAllTableFields;

@@ -26,7 +26,7 @@ const connectToDb = async (req, res) => {
 		await userPgPool.query("SELECT 1");
 
 		const userId = req.headers.authorization.split(" ")[1];
-		const poolKey = `${host}${delimiter}${dbName}${delimiter}${username}`;
+		const poolKey = `${host}${delimiter}${dbName}${delimiter}${username}${delimiter}${port}${delimiter}${password}`;
 		setActiveConnection(userId, poolKey);
 
 		return res.status(200).json({

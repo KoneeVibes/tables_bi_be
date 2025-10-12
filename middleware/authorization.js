@@ -44,7 +44,7 @@ module.exports = async (req, res, next) => {
 			});
 		}
 
-		const user = await pgPool.query("SELECT * FROM users WHERE id = $1", [
+		const user = await pgPool.query("SELECT * FROM app_user WHERE id = $1", [
 			decodedToken.userId,
 		]);
 		if (user.rows.length === 0)

@@ -43,7 +43,7 @@ const signUpUser = async (req, res) => {
 	try {
 		// Check if user already exists
 		const existingUser = await pgPool.query(
-			"SELECT id, email, status FROM users WHERE email = $1",
+			"SELECT id, email, status FROM app_user WHERE email = $1",
 			[email]
 		);
 
@@ -53,7 +53,7 @@ const signUpUser = async (req, res) => {
 			existingUser.rows[0].status === "inactive"
 		) {
 			const existingOTP = await pgPool.query(
-				"SELECT * FROM valid_account_verification_otps WHERE requester = $1",
+				"SELECT * FROM valid_account_verification_otp WHERE requester = $1",
 				[existingUser.rows[0].email]
 			);
 			if (existingOTP.rows.length > 0) {
@@ -70,7 +70,7 @@ const signUpUser = async (req, res) => {
 				// Store the OTP in the database
 				const otpId = uuidv4();
 				await pgPool.query(
-					`INSERT INTO account_verification_otps (id, requester, otp)
+					`INSERT INTO account_verification_otp (id, requester, otp)
                     VALUES ($1, $2, $3)`,
 					[otpId, existingUser.rows[0].email, hashedOTP]
 				);
@@ -126,7 +126,7 @@ const signUpUser = async (req, res) => {
 		// Insert new user
 		const userId = uuidv4();
 		const newUser = await pgPool.query(
-			`INSERT INTO users (id, first_name, last_name, email, organization, password)
+			`INSERT INTO app_user (id, first_name, last_name, email, organization, password)
              VALUES ($1, $2, $3, $4, $5, $6) RETURNING email`,
 			[userId, firstName, lastName, email, organization || null, hashedPassword]
 		);
@@ -138,34 +138,35 @@ const signUpUser = async (req, res) => {
 		// Store the OTP in the database
 		const otpId = uuidv4();
 		await pgPool.query(
-			`INSERT INTO account_verification_otps (id, requester, otp)
+			`INSERT INTO account_verification_otp (id, requester, otp)
             VALUES ($1, $2, $3)`,
 			[otpId, newUser.rows[0].email, hashedOTP]
 		);
 
 		// Send the OTP via email
-		const transporter = nodemailer.createTransport({
-			host: process.env.MAIL_SERVER,
-			port: 465,
-			secure: true,
-			auth: {
-				user: process.env.MAIL_ID,
-				pass: process.env.MAIL_PASSWORD,
-			},
-			// temporary workaround for local testing
-			// should be removed in production
-			tls: {
-				rejectUnauthorized: false,
-			},
-		});
-		const mailOptions = {
-			from: process.env.MAIL_ID,
-			to: email,
-			subject: "Account Verification Code",
-			text: `Your account verification OTP is ${randomSixDigits}`,
-		};
-		try {
-			await transporter.sendMail(mailOptions);
+		// const transporter = nodemailer.createTransport({
+		// 	host: process.env.MAIL_SERVER,
+		// 	port: 465,
+		// 	secure: true,
+		// 	auth: {
+		// 		user: process.env.MAIL_ID,
+		// 		pass: process.env.MAIL_PASSWORD,
+		// 	},
+		// 	// temporary workaround for local testing
+		// 	// should be removed in production
+		// 	tls: {
+		// 		rejectUnauthorized: false,
+		// 	},
+		// });
+		// const mailOptions = {
+		// 	from: process.env.MAIL_ID,
+		// 	to: email,
+		// 	subject: "Account Verification Code",
+		// 	text: `Your account verification OTP is ${randomSixDigits}`,
+		// };
+        try {
+            console.log(randomSixDigits)
+			// await transporter.sendMail(mailOptions);
 			return res.status(201).json({
 				status: "success",
 				message: "User created and OTP sent successfully",
