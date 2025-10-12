@@ -91,7 +91,6 @@ const saveQuery = async (req, res) => {
 				.json({ status: "fail", message: "No active DB connection" });
 		}
 		const [host, dbName, username, port, password] = poolKey.split(delimiter);
-		console.log(poolKey);
 
 		// start transaction
 		await client.query("BEGIN");

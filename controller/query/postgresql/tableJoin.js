@@ -187,6 +187,7 @@ const joinTables = async (req, res) => {
 								? `GROUP BY ${groupByFields.join(", ")}`
 								: ""
 						}`;
+		console.log(sql);
 
 		const result = await pool.query(sql);
 		return res.status(200).json({
