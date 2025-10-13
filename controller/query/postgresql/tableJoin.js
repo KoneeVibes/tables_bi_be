@@ -167,6 +167,12 @@ const joinTables = async (req, res) => {
 			const tableName = match[1];
 			return validTables.includes(tableName);
 		});
+		const filteredGroupByFields = groupByFields.filter((f) => {
+			const match = f.match(/\b(\w+)\./);
+			if (!match) return false;
+			const tableName = match[1];
+			return validTables.includes(tableName);
+		});
 		if (filteredFields.length === 0) {
 			return res.status(400).json({
 				status: "error",
@@ -179,15 +185,14 @@ const joinTables = async (req, res) => {
 			f.match(/(SUM|COUNT|AVG|MIN|MAX)\(/i)
 		);
 		const sql = `
-            SELECT ${fields.join(", ")}
+            SELECT ${filteredFields.join(", ")}
             FROM ${primaryTable}
             ${joins.join("\n")}
             ${
-							hasAggregates && groupByFields.length > 0
-								? `GROUP BY ${groupByFields.join(", ")}`
+							hasAggregates && filteredGroupByFields.length > 0
+								? `GROUP BY ${filteredGroupByFields.join(", ")}`
 								: ""
 						}`;
-		console.log(sql);
 
 		const result = await pool.query(sql);
 		return res.status(200).json({
