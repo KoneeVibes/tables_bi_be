@@ -144,29 +144,28 @@ const signUpUser = async (req, res) => {
 		);
 
 		// Send the OTP via email
-		// const transporter = nodemailer.createTransport({
-		// 	host: process.env.MAIL_SERVER,
-		// 	port: 465,
-		// 	secure: true,
-		// 	auth: {
-		// 		user: process.env.MAIL_ID,
-		// 		pass: process.env.MAIL_PASSWORD,
-		// 	},
-		// 	// temporary workaround for local testing
-		// 	// should be removed in production
-		// 	tls: {
-		// 		rejectUnauthorized: false,
-		// 	},
-		// });
-		// const mailOptions = {
-		// 	from: process.env.MAIL_ID,
-		// 	to: email,
-		// 	subject: "Account Verification Code",
-		// 	text: `Your account verification OTP is ${randomSixDigits}`,
-		// };
-        try {
-            console.log(randomSixDigits)
-			// await transporter.sendMail(mailOptions);
+		const transporter = nodemailer.createTransport({
+			host: process.env.MAIL_SERVER,
+			port: 465,
+			secure: true,
+			auth: {
+				user: process.env.MAIL_ID,
+				pass: process.env.MAIL_PASSWORD,
+			},
+			// temporary workaround for local testing
+			// should be removed in production
+			tls: {
+				rejectUnauthorized: false,
+			},
+		});
+		const mailOptions = {
+			from: process.env.MAIL_ID,
+			to: email,
+			subject: "Account Verification Code",
+			text: `Your account verification OTP is ${randomSixDigits}`,
+		};
+		try {
+			await transporter.sendMail(mailOptions);
 			return res.status(201).json({
 				status: "success",
 				message: "User created and OTP sent successfully",
