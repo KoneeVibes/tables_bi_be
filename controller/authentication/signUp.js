@@ -78,8 +78,8 @@ const signUpUser = async (req, res) => {
 				// Send the OTP via email
 				const transporter = nodemailer.createTransport({
 					host: process.env.MAIL_SERVER,
-					port: 587,
-					secure: false,
+					port: 465,
+					secure: true,
 					auth: {
 						user: process.env.MAIL_ID,
 						pass: process.env.MAIL_PASSWORD,
@@ -98,7 +98,6 @@ const signUpUser = async (req, res) => {
 				};
 				try {
 					await transporter.sendMail(mailOptions);
-					console.log(mailOptions);
 					return res.status(200).json({
 						status: "success",
 						message: "OTP sent successfully",
