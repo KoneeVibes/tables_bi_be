@@ -98,6 +98,7 @@ const signUpUser = async (req, res) => {
 				};
 				try {
 					await transporter.sendMail(mailOptions);
+					console.log(mailOptions);
 					return res.status(200).json({
 						status: "success",
 						message: "OTP sent successfully",
