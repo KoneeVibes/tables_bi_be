@@ -162,13 +162,13 @@ const joinTables = async (req, res) => {
 
 		const validTables = Array.from(joinedTables);
 		const filteredFields = fields.filter((f) => {
-			const match = f.match(/\b(\w+)\./);
+			const match = f.match(/"([^"]+)"\./);
 			if (!match) return false;
 			const tableName = match[1];
 			return validTables.includes(tableName);
 		});
 		const filteredGroupByFields = groupByFields.filter((f) => {
-			const match = f.match(/\b(\w+)\./);
+			const match = f.match(/"([^"]+)"\./);
 			if (!match) return false;
 			const tableName = match[1];
 			return validTables.includes(tableName);
@@ -186,14 +186,13 @@ const joinTables = async (req, res) => {
 		);
 		const sql = `
             SELECT ${filteredFields.join(", ")}
-            FROM ${primaryTable}
+            FROM "${primaryTable}"
             ${joins.join("\n")}
             ${
 							hasAggregates && filteredGroupByFields.length > 0
 								? `GROUP BY ${filteredGroupByFields.join(", ")}`
 								: ""
 						}`;
-		console.log(sql);
 
 		const result = await pool.query(sql);
 		return res.status(200).json({
