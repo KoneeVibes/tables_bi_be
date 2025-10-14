@@ -55,7 +55,7 @@ const joinTables = async (req, res) => {
 				const tableName = datasourceDetails[tableKey];
 				if (tableName && value.length > 0) {
 					value.forEach((col) => {
-						const colName = `${tableName}.${col.name}`;
+                        const colName = `"${tableName}"."${col.name}"`;
 						if (col.aggregate && col.aggregate.trim() !== "") {
 							fields.push(
 								`${col.aggregate.toUpperCase()}(${colName}) AS "${col.aggregate.toUpperCase()}_${tableName}.${
@@ -80,7 +80,7 @@ const joinTables = async (req, res) => {
 
 		const tableHasRows = async (pool, tableName) => {
 			const { rows } = await pool.query(
-				`SELECT EXISTS (SELECT 1 FROM ${tableName} LIMIT 1) AS has_rows`
+				`SELECT EXISTS (SELECT 1 FROM "${tableName}" LIMIT 1) AS has_rows`
 			);
 			return rows[0].has_rows;
 		};
@@ -123,7 +123,7 @@ const joinTables = async (req, res) => {
 
 				// Case 1: Primary table matches the source_table
 				if (source_table === primaryTable && !joinedTables.has(target_table)) {
-					joinClause = `JOIN ${target_table} ON ${source_table}.${source_column} = ${target_table}.${target_column}`;
+					joinClause = `JOIN "${target_table}" ON "${source_table}"."${source_column}" = "${target_table}"."${target_column}"`;
 					tableToJoin = target_table;
 				}
 
@@ -132,16 +132,16 @@ const joinTables = async (req, res) => {
 					target_table === primaryTable &&
 					!joinedTables.has(source_table)
 				) {
-					joinClause = `JOIN ${source_table} ON ${source_table}.${source_column} = ${target_table}.${target_column}`;
+					joinClause = `JOIN "${source_table}" ON "${source_table}"."${source_column}" = "${target_table}"."${target_column}"`;
 					tableToJoin = source_table;
 				}
 
 				// Case 3: Neither directly matches primaryTable (chain joins)
 				else if (!joinedTables.has(source_table)) {
-					joinClause = `JOIN ${source_table} ON ${source_table}.${source_column} = ${target_table}.${target_column}`;
+					joinClause = `JOIN "${source_table}" ON "${source_table}"."${source_column}" = "${target_table}"."${target_column}"`;
 					tableToJoin = source_table;
 				} else if (!joinedTables.has(target_table)) {
-					joinClause = `JOIN ${target_table} ON ${source_table}.${source_column} = ${target_table}.${target_column}`;
+					joinClause = `JOIN "${target_table}" ON "${source_table}"."${source_column}" = "${target_table}"."${target_column}"`;
 					tableToJoin = target_table;
 				}
 
