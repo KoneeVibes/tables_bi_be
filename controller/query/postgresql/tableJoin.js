@@ -55,7 +55,7 @@ const joinTables = async (req, res) => {
 				const tableName = datasourceDetails[tableKey];
 				if (tableName && value.length > 0) {
 					value.forEach((col) => {
-                        const colName = `"${tableName}"."${col.name}"`;
+						const colName = `"${tableName}"."${col.name}"`;
 						if (col.aggregate && col.aggregate.trim() !== "") {
 							fields.push(
 								`${col.aggregate.toUpperCase()}(${colName}) AS "${col.aggregate.toUpperCase()}_${tableName}.${
@@ -193,6 +193,7 @@ const joinTables = async (req, res) => {
 								? `GROUP BY ${filteredGroupByFields.join(", ")}`
 								: ""
 						}`;
+		console.log(sql);
 
 		const result = await pool.query(sql);
 		return res.status(200).json({
