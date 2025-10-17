@@ -28,7 +28,7 @@ const saveQuery = async (req, res) => {
 		const {
 			tableRelationship,
 			datasourceDetails,
-			queryName = "test",
+			queryName = "undefined",
 		} = req.body || {};
 
 		if (!tableRelationship || !datasourceDetails) {

@@ -61,6 +61,14 @@ const retrieveAllTableRelationship = async (req, res) => {
 			tableNames.map(async (tableName) => {
 				try {
 					const result = await pool.query(sql, [tableName]);
+					if (result.rows.length === 0) {
+						result.rows.push({
+							source_table: tableName,
+							source_column: null,
+							target_table: tableName,
+							target_column: null,
+						});
+					}
 					return { tableName, rows: result.rows };
 				} catch (err) {
 					console.error(`Failed to fetch relationships for ${tableName}:`, err);

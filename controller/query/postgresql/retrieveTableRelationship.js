@@ -57,6 +57,14 @@ const retrieveTableRelationship = async (req, res) => {
           `,
 			[tableName]
 		);
+		if (result.rows.length === 0) {
+			result.rows.push({
+				source_table: tableName,
+				source_column: null,
+				target_table: tableName,
+				target_column: null,
+			});
+        };
 		return res
 			.status(200)
 			.json({ status: "success", data: { [tableName]: result.rows } });
