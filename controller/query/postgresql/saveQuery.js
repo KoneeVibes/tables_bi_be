@@ -26,6 +26,7 @@ const saveQuery = async (req, res) => {
 		const { id } = req.user || {};
 		const { authorization } = req.headers;
 		const {
+			resultFilter,
 			tableRelationship,
 			datasourceDetails,
 			queryName = "undefined",
@@ -239,6 +240,50 @@ const saveQuery = async (req, res) => {
 							message: `Failed to save aggregate for field: ${fieldName}`,
 						});
 					}
+				}
+			}
+		}
+
+		if (resultFilter) {
+            const { sort = [], filter = [] } = resultFilter;
+            
+			for (let i = 0; i < sort.length; i++) {
+				const { field = "", value = "" } = sort[i];
+				const cleanField = field.trim() || null;
+				const cleanValue = value.trim() || null;
+                if (!cleanField && !cleanValue) continue;
+				const sortConfigId = uuidv4();
+				const orderIndex = i;
+				const sortInsert = await client.query(
+					`INSERT INTO query_sort (id, query_id, field, value, order_index)
+                     VALUES ($1, $2, $3, $4, $5)`,
+					[sortConfigId, queryConfigId, cleanField, cleanValue, orderIndex]
+				);
+				if (sortInsert.rowCount === 0) {
+					return res.status(500).json({
+						status: "error",
+						message: "Failed to save sort configuration",
+					});
+				}
+            }
+            
+			for (const filterConfig of filter) {
+				const { field = "", criteria = "", value = "" } = filterConfig;
+				const cleanField = field.trim() || null;
+				const cleanCriteria = criteria.trim() || null;
+				const cleanValue = String(value).trim() || null;
+				if (!cleanField && !cleanCriteria && !cleanValue) continue;
+				const filterConfigId = uuidv4();
+				const filterInsert = await client.query(
+					`INSERT INTO query_filter (id, query_id, field, value, criteria)
+                     VALUES ($1, $2, $3, $4, $5)`,
+					[filterConfigId, queryConfigId, cleanField, cleanValue, cleanCriteria]
+				);
+				if (filterInsert.rowCount === 0) {
+					return res.status(500).json({
+						status: "error",
+						message: "Failed to save filter configuration",
+					});
 				}
 			}
 		}

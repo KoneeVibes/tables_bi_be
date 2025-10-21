@@ -68,6 +68,18 @@ const retrieveAllSavedQuery = async (req, res) => {
 		);
 		const queryAggregates = queryAggregatesResult.rows;
 
+		const querySortResult = await pgPool.query(
+			`SELECT * FROM query_sort WHERE query_id = ANY($1::uuid[])`,
+			[queryIds]
+		);
+		const querySorts = querySortResult.rows;
+
+		const queryFilterResult = await pgPool.query(
+			`SELECT * FROM query_filter WHERE query_id = ANY($1::uuid[])`,
+			[queryIds]
+		);
+		const queryFilters = queryFilterResult.rows;
+
 		const finalResults = queryConfigs.map((queryConfig) => {
 			const connectionConfig = connectionConfigs.find(
 				(c) => c.id === queryConfig.connection_id
@@ -120,6 +132,19 @@ const retrieveAllSavedQuery = async (req, res) => {
 					target_column: rel.target_column,
 				});
 			}
+
+			const sortsForQuery = querySorts
+				.filter((s) => s.query_id === queryConfig.id)
+				.map(({ field, value, order_index }) => ({
+					field,
+					value,
+					order_index,
+				}));
+
+			const filtersForQuery = queryFilters
+				.filter((f) => f.query_id === queryConfig.id)
+				.map(({ field, value, criteria }) => ({ field, value, criteria }));
+
 			return {
 				queryDetails: {
 					name: queryConfig.name,
@@ -135,6 +160,10 @@ const retrieveAllSavedQuery = async (req, res) => {
 					createdAt: connectionConfig.created_at, //added this field so we can use this timestamp as cutoff while re-joining table
 				},
 				datasourceDetails,
+				resultFilter: {
+					sort: sortsForQuery,
+					filter: filtersForQuery,
+				},
 				tableRelationships: tableRelationshipsGrouped,
 			};
 		});
