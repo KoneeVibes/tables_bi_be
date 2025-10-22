@@ -151,6 +151,7 @@ const retrieveAllSavedQuery = async (req, res) => {
 					createdAt: queryConfig.created_at,
 				},
 				connectionConfig: {
+					id: connectionConfig.id,
 					user: connectionConfig.user_name,
 					host: connectionConfig.host,
 					dbName: connectionConfig.database_name,

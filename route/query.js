@@ -22,10 +22,6 @@ const postgreSQLJoin = require("../controller/query/postgresql/tableJoin");
 const mySQLJoin = require("../controller/query/mysql/tableJoin");
 const sqlServerJoin = require("../controller/query/sqlserver/tableJoin");
 
-const postgreSQLSaveQuery = require("../controller/query/postgresql/saveQuery");
-const mySQLSaveQuery = require("../controller/query/mysql/saveQuery");
-const sqlServerSaveQuery = require("../controller/query/sqlserver/saveQuery");
-
 const router = express.Router();
 
 router.get("/all/table", (req, res) => {
@@ -93,20 +89,6 @@ router.post("/run-join", (req, res) => {
 			return mySQLJoin(req, res);
 		case "SQL-Server":
 			return sqlServerJoin(req, res);
-		default:
-			return res.status(400).json({ error: response });
-	}
-});
-
-router.post("/save-query", (req, res) => {
-	const response = determineDBType(req);
-	switch (response) {
-		case "PostgreSQL":
-			return postgreSQLSaveQuery(req, res);
-		case "MySQL":
-			return mySQLSaveQuery(req, res);
-		case "SQL-Server":
-			return sqlServerSaveQuery(req, res);
 		default:
 			return res.status(400).json({ error: response });
 	}

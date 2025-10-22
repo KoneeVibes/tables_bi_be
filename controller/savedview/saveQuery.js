@@ -1,11 +1,11 @@
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
-const appPGDBPool = require("../../../db/pgDBPoolManager");
+const appPGDBPool = require("../../db/pgDBPoolManager");
 const {
 	getActiveConnection,
-} = require("../../connection/postgresql/activeConnection");
-const determineDBType = require("../../../helper/dbTypeDeterminer");
-const { encrypt } = require("../../../util/encryption");
+} = require("../connection/activeConnection");
+const determineDBType = require("../../helper/dbTypeDeterminer");
+const { encrypt } = require("../../util/encryption");
 
 const delimiter = process.env.POOL_KEY_DELIMITER;
 
@@ -245,13 +245,13 @@ const saveQuery = async (req, res) => {
 		}
 
 		if (resultFilter) {
-            const { sort = [], filter = [] } = resultFilter;
-            
+			const { sort = [], filter = [] } = resultFilter;
+
 			for (let i = 0; i < sort.length; i++) {
 				const { field = "", value = "" } = sort[i];
 				const cleanField = field.trim() || null;
 				const cleanValue = value.trim() || null;
-                if (!cleanField && !cleanValue) continue;
+				if (!cleanField && !cleanValue) continue;
 				const sortConfigId = uuidv4();
 				const orderIndex = i;
 				const sortInsert = await client.query(
@@ -265,8 +265,8 @@ const saveQuery = async (req, res) => {
 						message: "Failed to save sort configuration",
 					});
 				}
-            }
-            
+			}
+
 			for (const filterConfig of filter) {
 				const { field = "", criteria = "", value = "" } = filterConfig;
 				const cleanField = field.trim() || null;

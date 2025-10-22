@@ -1,7 +1,7 @@
 const userPGDBPool = require("../../../db/pgDBPoolManager");
 const {
 	getActiveConnection,
-} = require("../../connection/postgresql/activeConnection");
+} = require("../../connection/activeConnection");
 
 const delimiter = process.env.POOL_KEY_DELIMITER;
 
