@@ -20,4 +20,9 @@ router.post("/connect-to-db", (req, res) => {
 	}
 });
 
+router.get(
+	"/all",
+	require("../controller/connection/retrieveAllUserConnection")
+);
+
 module.exports = router;
