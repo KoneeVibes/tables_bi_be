@@ -17,6 +17,7 @@ function getDBPool({ user, host, database, password, port }) {
 		database,
 		password,
 		port,
+		ssl: { rejectUnauthorized: false },
 	});
 
 	pool.on("connect", () => {
