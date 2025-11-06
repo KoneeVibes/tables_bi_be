@@ -1,4 +1,3 @@
-const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
 const appPGDBPool = require("../../db/pgDBPoolManager");
 const {
