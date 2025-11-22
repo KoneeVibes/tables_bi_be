@@ -47,10 +47,14 @@ const verifyOtp = async (req, res) => {
 			"UPDATE app_user SET status = $1 WHERE email = $2 RETURNING id",
 			["active", email]
 		);
-		await pgPool.query(
-			"DELETE FROM account_verification_otp WHERE requester = $1",
-			[email]
-		);
+
+		const deleteOtp = req.query.deleteOtp === "true";
+		if (deleteOtp) {
+			await pgPool.query(
+				"DELETE FROM account_verification_otp WHERE requester = $1",
+				[email]
+			);
+		}
 
 		return res.status(200).json({
 			status: "success",
